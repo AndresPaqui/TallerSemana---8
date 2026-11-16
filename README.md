@@ -192,6 +192,71 @@ Se incluye `DatosIniciales.java` con estos veinte registros quemados y una clase
 
 Los casos que indican «datos iniciales» deben ejecutarse en una sesión nueva o antes de modificar ese conjunto.
 
+## Distribución del trabajo (seis participantes)
+
+Cada participante debe implementar y explicar su parte. Coordinen primero las firmas de los métodos compartidos, especialmente los de `Lista`, para integrar sin duplicar lógica. Aunque el mínimo de entrega es de tres cuentas distintas, procuren que cada participante registre al menos un commit significativo desde su propia cuenta.
+
+| Participante | Responsabilidad | Entregables y coordinación |
+|---|---|---|
+| Participante 1 | Adaptar el modelo `Libro` al catálogo BiblioLikes. | Mantener código inmutable, título, autor, género, año y me gusta; completar constructor, getters y operaciones necesarias. Asegurar que `Ventana` y `DatosIniciales` puedan crear y mostrar el mismo modelo. |
+| Participante 2 | Preparar la carga inicial y el registro en `Lista`. | Integrar los 20 libros de `DatosIniciales` una sola vez, mantener el total visible y completar el registro con código positivo y único. Conservar la lista ordenada por código usando burbuja, incluso al agregar un código menor. |
+| Participante 3 | Implementar y comprobar la búsqueda lineal por texto. | Completar `buscarCoincidencias` para buscar fragmentos en título o autor sin distinguir mayúsculas, rechazar consultas vacías y devolver un `ArrayList` nuevo sin duplicados. |
+| Participante 4 | Completar la búsqueda binaria y la edición de libros. | Implementar la búsqueda por código sobre la lista ordenada; permitir editar título, autor, género y año sin cambiar código ni me gusta. Validar todos los campos antes de modificar para evitar cambios parciales. |
+| Participante 5 | Adaptar `Ventana.java` y `Ventana.form` al programa BiblioLikes. | Reemplazar los campos, categorías y pestañas del formulario heredado por las requeridas para Registro, Búsquedas y edición, y Ranking. Conectar los controles a los métodos acordados, mostrar validaciones y refrescar las vistas sin recargar el catálogo. |
+| Participante 6 | Implementar Me gusta y ranking, y verificar la integración. | Incrementar solo el libro seleccionado; crear una copia para ordenar por me gusta descendente con burbuja estable y desempate por código ascendente. Comprobar los casos de búsqueda, edición, selección, ranking y que la búsqueda binaria siga funcionando tras consultar el ranking. |
+
+Orden sugerido de integración: acordar primero el modelo y las firmas de `Lista`; integrar carga/registro y búsquedas; después edición, Me gusta y ranking; finalmente conectar y probar la interfaz Swing. Los cambios de varias personas en `Lista.java` deben coordinarse para no sobrescribir aportes.
+
+### Tutorial para cada participante
+
+#### Participante 1: modelo `Libro`
+
+1. Revisa `Libro.java` y compáralo con los datos que exige este taller. El objeto debe guardar código, título, autor, género, año y contador de me gusta.
+2. Conserva el código como inmutable: se asigna al construir el libro y no se cambia al editarlo. Incluye un constructor compatible con los seis datos usados por `DatosIniciales.cargar()`. Para libros nuevos, el registro debe inicializar los me gusta en 0.
+3. Proporciona getters para consultar los atributos y operaciones controladas para editar título, autor, género y año, además de incrementar los me gusta. No agregues un setter para cambiar el código.
+4. Implementa `toString()` para que la JList pueda mostrar al menos código, título y contador. Coordina los nombres del constructor y métodos con quienes trabajan en `Lista.java` y `Ventana.java`.
+5. Comprueba que las 20 llamadas de `DatosIniciales.java` compilen y que editar un libro no cambie su código ni sus me gusta.
+
+#### Participante 2: carga inicial y registro
+
+1. Revisa `Lista.java` y `DatosIniciales.java`. Define con el equipo cómo se obtendrá el catálogo y evita crear una segunda lista independiente en la ventana.
+2. Carga `DatosIniciales.cargar()` una sola vez cuando se inicia la aplicación. Ordena la colección principal por código con el método burbuja existente antes de usar la búsqueda binaria.
+3. Completa el registro: valida que el libro y sus campos obligatorios sean válidos, que el código sea positivo y que no exista otro con ese código. Si la validación falla, informa el error sin cambiar la lista.
+4. Al registrar correctamente, agrega el libro, vuelve a ordenar por código con burbuja y actualiza la cantidad que ve el usuario. No supongas que los nuevos códigos son mayores que los existentes.
+5. Comprueba que el catálogo empiece con 20 libros, que un código duplicado no se agregue y que registrar el código 999 lo ubique al inicio sin romper la búsqueda binaria.
+
+#### Participante 3: búsqueda lineal por texto
+
+1. En `Lista.java`, completa o reemplaza la búsqueda actual por un método como `buscarCoincidencias(String texto)` que devuelva `ArrayList<Libro>`.
+2. Antes de recorrer el catálogo, quita espacios al principio y al final y convierte la consulta y los títulos/autores a minúsculas para comparar sin distinguir mayúsculas. Una consulta vacía o con solo espacios debe rechazarse con un mensaje claro.
+3. Recorre la colección principal una sola vez. Agrega cada libro si el fragmento aparece en el título o en el autor; utiliza una condición única para que un mismo libro no aparezca dos veces. Devuelve una lista nueva y nunca `null`.
+4. No elimines ni reordenes libros del catálogo al buscar. La búsqueda lineal debe conservar el orden por código que ya tiene la colección principal.
+5. Comprueba las búsquedas `JAVA`, `bases` y `vega` con los datos iniciales, una búsqueda sin resultados y una consulta vacía. Confirma los resultados esperados en los casos de comprobación.
+
+#### Participante 4: búsqueda binaria y edición
+
+1. Reutiliza en `Lista.java` el método binario sobre la colección principal ordenada por código. Debe devolver el índice del libro o `-1`, y rechazar códigos no positivos.
+2. Al editar, identifica el libro por su código único. Valida primero todos los valores nuevos: título, autor, género y año entre 1 y el año actual. No cambies ningún atributo hasta que todas las validaciones hayan pasado.
+3. Mantén el código y los me gusta fuera del formulario de edición. Después de guardar, modifica el mismo objeto del catálogo; no crees otro libro ni alteres el orden por código.
+4. Si el código no existe, la interfaz debe avisar y limpiar/desactivar la selección anterior para que guardar o dar Me gusta no afecte otro libro.
+5. Comprueba que se puede encontrar el código 1015, editarlo sin modificar su código o contador y que un año o autor inválidos no dejen cambios parciales. Prueba también un código inexistente después de una búsqueda válida.
+
+#### Participante 5: adaptación de la ventana Swing
+
+1. Abre `Ventana.form` y `Ventana.java` y ubica los controles del formulario heredado. Actualmente usa ISBN, categorías distintas y pestañas de ingreso/listado; compáralos con la interfaz de tres pestañas especificada arriba.
+2. Adapta el formulario para Registro; Búsquedas y edición; y Ranking. Agrega o renombra los campos y botones requeridos, utiliza tipos genéricos como `JList<Libro>` y `DefaultListModel<Libro>` cuando corresponda, y configura el género y los límites del año.
+3. Conecta cada botón al método acordado del catálogo. La ventana debe recibir o compartir la instancia de `Lista` que contiene los 20 libros; no debe crear ni recargar el catálogo cada vez que se cambia de pestaña.
+4. Muestra mensajes de validación y resultados, actualiza el total y refresca las listas después de registrar, buscar o editar. Al seleccionar un resultado solo muestra sus datos; no incrementa los me gusta.
+5. Comprueba que la aplicación arranca con 20 libros, que cada pestaña presenta su función y que los controles llaman al catálogo compartido. Integra los métodos de Me gusta y ranking con el Participante 6.
+
+#### Participante 6: Me gusta, ranking e integración
+
+1. Implementa en el catálogo una operación que reciba el código del libro seleccionado, lo encuentre y aumente su contador en uno. Si no existe o no hay selección válida, avisa sin cambiar ningún libro.
+2. Para obtener el ranking, crea una copia con `new ArrayList<>(...)`; no ordenes la colección principal. Aplica burbuja descendente por me gusta y, para conservar el desempate por código, intercambia solo cuando el contador izquierdo sea menor que el derecho.
+3. Conecta el botón **Me gusta +1** y la pestaña Ranking: muestra código, título y contador, y actualiza el ranking al entrar en la pestaña o pulsar Actualizar.
+4. Coordina con el Participante 5 para refrescar el detalle y las listas sin perder la selección de manera incorrecta. Después de una edición que afecte una búsqueda de texto, vuelve a calcular los resultados y limpia la selección si el libro ya no coincide.
+5. Ejecuta los casos de comprobación con el equipo: ranking inicial con sus empates, tres clics sobre 1001, ausencia de selección, registro y edición, y búsqueda binaria después de consultar el ranking. Confirma que siguen apareciendo los 20 libros en el catálogo y que su orden por código no cambia.
+
 ## Trabajo en GitHub y entrega
 
 1. Crear **un repositorio por equipo**, accesible para el docente.
@@ -200,11 +265,14 @@ Los casos que indican «datos iniciales» deben ejecutarse en una sesión nueva 
 4. Entregar el enlace, el código integrado, capturas de las tres pestañas y evidencia de los casos de comprobación.
 5. Completar la tabla de aportes y preparar una demostración de búsqueda, edición, clics de me gusta y ranking.
 
-| Integrante | Usuario GitHub | Funcionalidad desarrollada | Enlace al commit |
+| Participante | Usuario GitHub | Funcionalidad desarrollada | Enlace al commit |
 |---|---|---|---|
-| Por completar | Por completar | Por completar | Por completar |
-| Por completar | Por completar | Por completar | Por completar |
-| Por completar | Por completar | Por completar | Por completar |
+| Participante 1 | Por completar | Modelo `Libro` | Por completar |
+| Participante 2 | Por completar | Carga inicial y registro | Por completar |
+| Participante 3 | Por completar | Búsqueda lineal | Por completar |
+| Participante 4 | Por completar | Búsqueda binaria y edición | Por completar |
+| Participante 5 | Por completar | Adaptación e integración de Swing | Por completar |
+| Participante 6 | Por completar | Me gusta, ranking y pruebas de integración | Por completar |
 
 Verificar que GitHub asocie los commits a sus cuentas; si utilizan Git local, el correo configurado debe estar asociado a la cuenta correspondiente. El número de commits no sustituye la explicación del aporte.
 
