@@ -37,11 +37,18 @@ public class Lista {
 
     }
 
-    public ArrayList<Libro> buscar(String texto){
-        ArrayList<Libro> resultado=new ArrayList<>();
+    public ArrayList<Libro> buscarCoincidencias(String texto){
+        if (texto == null || texto.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "La consulta no puede estar vacía: escribe parte de un título o de un autor.");
+        }
 
-        for(Libro aux:biblioteca){
-            if(aux.getTitulo().contains(texto)){
+        String consulta = texto.trim().toLowerCase();
+        ArrayList<Libro> resultado = new ArrayList<>();
+
+        for (Libro aux : biblioteca) {
+            if (aux.getTitulo().toLowerCase().contains(consulta)
+                    || aux.getAutor().toLowerCase().contains(consulta)) {
                 resultado.add(aux);
             }
         }
