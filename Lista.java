@@ -4,7 +4,8 @@ public class Lista {
     private final ArrayList<Libro> biblioteca;
 
     public Lista(){
-        biblioteca=new ArrayList<>();
+        biblioteca = DatosIniciales.cargar();
+        ordenar();
     }
 
     public void agregar(Libro dato) throws Exception {
@@ -66,16 +67,21 @@ public class Lista {
 
 
     public void ordenar(){
-        Libro aux;
-        for(int i =0; i<biblioteca.size()-1; i++)
-            for (int j=i+1; j<biblioteca.size(); j++)
-                if (biblioteca.get(i).getCodigo()>
-                        biblioteca.get(j).getCodigo()){
-                    aux=biblioteca.get(i);
-                    biblioteca.set(i,biblioteca.get(j));
-                    biblioteca.set(j,aux);
+        for (int i = 0; i < biblioteca.size() - 1; i++) {
+            boolean huboCambio = false;
+            for (int j = 0; j < biblioteca.size() - 1 - i; j++) {
+                if (biblioteca.get(j).getCodigo()
+                        > biblioteca.get(j + 1).getCodigo()) {
+                    Libro temporal = biblioteca.get(j);
+                    biblioteca.set(j, biblioteca.get(j + 1));
+                    biblioteca.set(j + 1, temporal);
+                    huboCambio = true;
                 }
-
+            }
+            if (!huboCambio) {
+                break;
+            }
+        }
     }
 
     public ArrayList<Libro> buscarCoincidencias(String texto){
@@ -123,17 +129,17 @@ public class Lista {
 
     }
     public void validarEdicion(String titulo, String autor, String genero, int anio) throws Exception {
-        if (titulo == null || titulo.isEmpty()) {
+        if (titulo == null || titulo.trim().isEmpty()) {
             throw new Exception("El título no puede estar vacío.");
         }
-        if (autor == null || autor.isEmpty()) {
+        if (autor == null || autor.trim().isEmpty()) {
             throw new Exception("El autor no puede estar vacío.");
         }
-        if (genero == null || genero.isEmpty()) {
+        if (genero == null || genero.trim().isEmpty()) {
             throw new Exception("El género no puede estar vacío.");
         }
-        if (anio < 0) {
-            throw new Exception("El año de publicación no puede ser negativo.");
+        if (anio < 1 || anio > java.time.Year.now().getValue()) {
+            throw new Exception("El año debe estar entre 1 y el año actual.");
         }
     }
 
@@ -143,9 +149,9 @@ public class Lista {
             throw new Exception("Libro no encontrado en el codigo: " + codigo);
         validarEdicion(titulo, autor, genero, anio);
         Libro libro=biblioteca.get(post);
-        libro.setTitulo(titulo);
-        libro.setAutor(autor);
-        libro.setGenero(genero);
+        libro.setTitulo(titulo.trim());
+        libro.setAutor(autor.trim());
+        libro.setGenero(genero.trim());
         libro.setAnio(anio);
         return libro;
     }
