@@ -49,6 +49,8 @@ public class Lista {
     }
 
     public int binario(int codigo){
+        if (codigo<1)
+            return -1;
         int tam=biblioteca.size()-1;
         if(tam<0)
             return -1;
@@ -72,6 +74,34 @@ public class Lista {
         return -1;
 
     }
+    public void validarEdicion(String titulo, String autor, String genero, int anio) throws Exception {
+        if (titulo == null || titulo.isEmpty()) {
+            throw new Exception("El título no puede estar vacío.");
+        }
+        if (autor == null || autor.isEmpty()) {
+            throw new Exception("El autor no puede estar vacío.");
+        }
+        if (genero == null || genero.isEmpty()) {
+            throw new Exception("El género no puede estar vacío.");
+        }
+        if (anio < 0) {
+            throw new Exception("El año de publicación no puede ser negativo.");
+        }
+    }
+
+    public Libro editar(int codigo, String titulo, String autor, String genero, int anio) throws Exception {
+        int post = binario(codigo);
+        if (post == -1)
+            throw new Exception("Libro no encontrado en el codigo: " + codigo);
+        validarEdicion(titulo, autor, genero, anio);
+        Libro libro=biblioteca.get(post);
+        libro.setTitulo(titulo);
+        libro.setAutor(autor);
+        libro.setGenero(genero);
+        libro.setAnio(anio);
+        return libro;
+    }
+
 
     public void darMeGusta(int codigo) {
         int indice = buscarIndicePorCodigo(codigo);   // la binaria de P4
