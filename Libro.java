@@ -1,4 +1,3 @@
-/** Modelo de referencia. Puede adaptarse a la clase Libro del proyecto existente. */
 public class Libro {
     private final int codigo;
     private String titulo;
@@ -13,7 +12,12 @@ public class Libro {
         this.autor = autor;
         this.genero = genero;
         this.anio = anio;
-        this.meGusta = meGusta;
+        this.meGusta = Math.max(0, meGusta);
+    }
+
+    // Constructor de 5 parámetros para nuevos registros (meGusta inicia en 0)
+    public Libro(int codigo, String titulo, String autor, String genero, int anio) {
+        this(codigo, titulo, autor, genero, anio, 0);
     }
 
     public int getCodigo() { return codigo; }
@@ -23,12 +27,14 @@ public class Libro {
     public int getAnio() { return anio; }
     public int getMeGusta() { return meGusta; }
 
-    // El servicio del catálogo debe validar TODOS los datos antes de llamar a estos setters.
     public void setTitulo(String titulo) { this.titulo = titulo; }
     public void setAutor(String autor) { this.autor = autor; }
     public void setGenero(String genero) { this.genero = genero; }
     public void setAnio(int anio) { this.anio = anio; }
-    public void incrementarMeGusta() { meGusta++; }
+
+    public void incrementarMeGusta() {
+        meGusta++;
+    }
 
     @Override
     public String toString() {
