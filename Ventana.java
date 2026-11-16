@@ -21,7 +21,20 @@ public class Ventana {
         btnRegistrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                registrarLibro();
+             int isbn=Integer.parseInt(txtIsbn.getText());
+             String titulo=txtTitulo.getText();
+             String autor=txtAutor.getText();
+             String cat=cboCategoria.getSelectedItem().toString();
+             int anio=Integer.parseInt(spiAnio.getValue().toString());
+             try{
+                 biblioteca.agregar(new Libro(isbn,titulo,autor,cat,anio));
+                 JOptionPane.showMessageDialog(null,
+                         "Agregado nuevo libro");
+             } catch (Exception ex) {
+                 JOptionPane.showMessageDialog(null,
+                         ex.getMessage());
+             }
+
             }
         });
         btnBuscar.addActionListener(new ActionListener() {
@@ -41,7 +54,7 @@ public class Ventana {
                         break;
                     case 2: dlm=new DefaultListModel();
                             String t2=txtBuscar.getText();
-                            dlm.addAll(biblioteca.buscarCoincidencias(t2));
+                            dlm.addAll(biblioteca.buscar(t2));
                             break;
 
                 }
