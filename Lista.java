@@ -15,6 +15,47 @@ public class Lista {
             throw new Exception("Valor duplicado");
     }
 
+    public void registrar(int codigo, String titulo, String autor,
+                          String genero, int anio) throws Exception {
+        validarCamposObligatorios(titulo, autor, genero);
+
+        if (codigo <= 0) {
+            throw new Exception("El código debe ser positivo.");
+        }
+        if (anio < 1 || anio > java.time.Year.now().getValue()) {
+            throw new Exception("El año debe estar entre 1 y el año actual.");
+        }
+
+        Libro nuevo = new Libro(
+                codigo,
+                titulo.trim(),
+                autor.trim(),
+                genero.trim(),
+                anio,
+                0
+        );
+
+        if (!unico(nuevo)) {
+            throw new Exception("Ya existe un libro con ese código.");
+        }
+
+        biblioteca.add(nuevo);
+        ordenar();
+    }
+
+    private void validarCamposObligatorios(String titulo, String autor,
+                                           String genero) throws Exception {
+        if (titulo == null || titulo.trim().isEmpty()) {
+            throw new Exception("El título es obligatorio.");
+        }
+        if (autor == null || autor.trim().isEmpty()) {
+            throw new Exception("El autor es obligatorio.");
+        }
+        if (genero == null || genero.trim().isEmpty()) {
+            throw new Exception("El género es obligatorio.");
+        }
+    }
+
     public boolean unico(Libro aux){
 
         for (Libro l : biblioteca)

@@ -63,6 +63,31 @@ public class Ventana {
         });
     }
 
+    private void registrarLibro() {
+        try {
+            String textoCodigo = txtIsbn.getText().trim();
+            if (textoCodigo.isEmpty()) {
+                throw new Exception("El código es obligatorio.");
+            }
+
+            int codigo = Integer.parseInt(textoCodigo);
+            String titulo = txtTitulo.getText();
+            String autor = txtAutor.getText();
+
+            Object seleccion = cboCategoria.getSelectedItem();
+            String genero = seleccion == null ? "" : seleccion.toString();
+
+            int anio = Integer.parseInt(spiAnio.getValue().toString());
+
+            biblioteca.registrar(codigo, titulo, autor, genero, anio);
+            JOptionPane.showMessageDialog(null, "Libro registrado.");
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "El código debe ser un número entero.");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("Ventana");
         frame.setContentPane(new Ventana().principal);
