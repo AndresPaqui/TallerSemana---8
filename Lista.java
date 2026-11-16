@@ -73,6 +73,31 @@ public class Lista {
 
     }
 
+    public void darMeGusta(int codigo) {
+        int indice = buscarIndicePorCodigo(codigo);   // la binaria de P4
+        if (indice == -1) {
+            throw new IllegalArgumentException("No existe un libro con el código " + codigo);
+        }
+        libros.get(indice).incrementarMeGusta();
+    }
+
+    public ArrayList<Libro> obtenerRanking() {
+        ArrayList<Libro> ranking = new ArrayList<>(libros);   // copia: mismos objetos, no toca la principal
+        int n = ranking.size();
+        for (int i = 0; i < n - 1; i++) {
+            boolean huboCambio = false;
+            for (int j = 0; j < n - 1 - i; j++) {
+                if (ranking.get(j).getMeGusta() < ranking.get(j + 1).getMeGusta()) {  // < estricto
+                    Libro temp = ranking.get(j);
+                    ranking.set(j, ranking.get(j + 1));
+                    ranking.set(j + 1, temp);
+                    huboCambio = true;
+                }
+            }
+            if (!huboCambio) break;
+        }
+        return ranking;
+    }
     public ArrayList<Libro> obtener(){
         return biblioteca;
     }
