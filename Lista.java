@@ -111,15 +111,15 @@ public class Lista {
 
 
     public void darMeGusta(int codigo) {
-        int indice = buscarIndicePorCodigo(codigo);   // la binaria de P4
+        int indice = binario(codigo);   // la binaria de P4
         if (indice == -1) {
             throw new IllegalArgumentException("No existe un libro con el código " + codigo);
         }
-        libros.get(indice).incrementarMeGusta();
+        biblioteca.get(indice).incrementarMeGusta();
     }
 
     public ArrayList<Libro> obtenerRanking() {
-        ArrayList<Libro> ranking = new ArrayList<>(libros);   // copia: mismos objetos, no toca la principal
+        ArrayList<Libro> ranking = new ArrayList<>(biblioteca);   // copia: mismos objetos, no toca la principal
         int n = ranking.size();
         for (int i = 0; i < n - 1; i++) {
             boolean huboCambio = false;
